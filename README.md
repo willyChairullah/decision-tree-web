@@ -28,3 +28,6 @@ Di halaman ini, pengguna dapat menguji model Decision Tree yang telah dilatih me
 ## Definisi Web
 
 Aplikasi web ini dirancang untuk memudahkan analisis data Tuberkulosis menggunakan metode Decision Tree. Dengan antarmuka yang ramah pengguna, aplikasi ini membantu pengguna dalam melakukan preprocessing data dan menguji model prediksi secara efisien. Aplikasi ini bermanfaat bagi peneliti, tenaga kesehatan, dan akademisi yang ingin melakukan analisis data TB secara cepat dan akurat.
+
+## Halaman Web streamlit.app
+https://decisiontree-tb.streamlit.app/
