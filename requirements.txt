@@ -3,4 +3,3 @@ pandas==2.2.1
 seaborn==0.13.1
 scikit-learn==1.2.0
 streamlit==1.36.0
-pickle==4.0
