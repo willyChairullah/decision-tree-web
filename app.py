@@ -1,3 +1,4 @@
+import pickle
 import pandas as pd
 import seaborn as sns
 import streamlit as st
@@ -13,12 +14,14 @@ from sklearn.metrics import accuracy_score, classification_report
 def main():
     st.logo("images/logo.png")
     st.sidebar.title("Navigasi")
-    page = st.sidebar.radio("Pilih Halaman", ["Home", "Preprocessing", "Testing"])
+    page = st.sidebar.radio("Pilih Halaman", ["Home", "Preprocessing", "Model","Testing"])
 
     if page == "Home":
         show_home()
     elif page == "Preprocessing":
         show_preprocessing()
+    elif page == "Model":
+        show_model()
     elif page == "Testing":
         show_testing()
 
@@ -140,7 +143,7 @@ def show_preprocessing():
     
     st.session_state['preprocessed_data'] = df
 
-def show_testing():
+def show_model():
     st.title("Testing Model")
     
     if 'preprocessed_data' not in st.session_state:
@@ -202,6 +205,69 @@ def show_testing():
     plot_tree(clf, filled=True, feature_names=X.columns, class_names=clf.classes_)
     st.subheader("Pohon Keputusan")
     st.pyplot(plt)
+
+def show_testing():
+    features_encode = {
+        "JENIS KELAMIN": {
+            "P": 1,
+            "L": 0
+        },
+        "FOTO TORAKS": {
+            "Positif": 1,
+            "Negatif": 0
+        },
+        "STATUS HIV": {
+            "Negatif": 0,
+            "Positif": 1
+        },
+        "RIWAYAT DIABETES": {
+            "Tidak": 0,
+            "Ya": 1
+        },
+        "HASIL TCM": {
+            "Rif Sensitif": 1,
+            "Negatif": 0,
+            "Rif resisten": 2
+        }
+    }
+
+    labels_encode = {
+        1: "Paru",
+        0: "Ekstra paru",
+    }
+
+    st.title("Prediksi TBC")
+
+    jenis_kelamin = st.selectbox("Jenis Kelamin", ["P", "L"])
+    foto_toraks = st.selectbox("Foto Toraks", ["Negatif", "Positif"])
+    status_hiv = st.selectbox("Status HIV", ["Negatif", "Positif"])
+    riwayat_diabetes = st.selectbox("Riwayat Diabetes", ["Tidak", "Ya"])
+    hasil_tcm = st.selectbox("Hasil TCM", ["Negatif", "Rif Sensitif", "Rif resisten"])
+
+    jk_encoded = features_encode["JENIS KELAMIN"][jenis_kelamin]
+    foto_encoded = features_encode["FOTO TORAKS"][foto_toraks]
+    hiv_encoded = features_encode["STATUS HIV"][status_hiv]
+    diabetes_encoded = features_encode["RIWAYAT DIABETES"][riwayat_diabetes]
+    tcm_encoded = features_encode["HASIL TCM"][hasil_tcm]
+
+    # Create a feature vector
+    input_data = pd.DataFrame({
+        "JENIS KELAMIN": [jk_encoded],
+        "FOTO TORAKS": [foto_encoded],
+        "STATUS HIV": [hiv_encoded],
+        "RIWAYAT DIABETES": [diabetes_encoded],
+        "HASIL TCM": [tcm_encoded]
+    })
+
+    check= st.button("Prediksi")
+
+    file = open("model\clf_pkl",'rb')
+    model = pickle.load(file)
+
+    prediction = model.predict(input_data)
+
+    if  check:
+        st.write(labels_encode[int(prediction[0])])
 
 if __name__ == "__main__":
     st.set_page_config(page_title="Decision Tree", page_icon="🌳")
