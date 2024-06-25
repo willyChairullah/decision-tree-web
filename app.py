@@ -5,6 +5,7 @@ import streamlit as st
 import matplotlib.pyplot as plt
 from sklearn import metrics
 from sklearn.tree import plot_tree
+from pandas.api.types import CategoricalDtype
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
@@ -62,10 +63,14 @@ def show_preprocessing():
     # --------------- Missing value -----------------
     st.write("### Missing Value")
 
+    umur = len(df[df['UMUR'] == '0'])
     tcm = len(df[df['HASIL TCM'] == 'Tidak dilakukan'])
     toraks = len(df[df['FOTO TORAKS'] == 'Tidak dilakukan'])
     hiv = len(df[df['STATUS HIV'] == 'Tidak diketahui'])
     diabet = len(df[df['RIWAYAT DIABETES'] == 'Tidak diketahui'])
+
+    st.write("\nData dengan 'UMUR' == '0':")
+    st.write(umur)
 
     st.write("\nData dengan 'HASIL TCM' == 'Tidak dilakukan':")
     st.write(tcm)
@@ -80,15 +85,17 @@ def show_preprocessing():
     st.write(diabet)
 
     # --------------- Drop attribute -----------------
-    st.write("### Drop Atribut")
-    st.write("Menghapus kolom 'Umur' dan 'kecamatan' karena tidak diperlukan")
+    # st.write("### Drop Atribut")
+    # st.write("Menghapus kolom 'kecamatan' karena tidak diperlukan")
     df = df.drop(["KECAMATAN"], axis=1)
     df = df.drop(["UMUR"], axis=1)
 
     # --------------- Pengisian Data -----------------
     st.write("### Pengisian Data")
+
+    # Tampilkan hasil
     st.write("Mengisi nilai yang hilang")
-    df['FOTO TORAKS'] = df['FOTO TORAKS'].replace('Tidak dilakukan', 'Negatif')
+    df['FOTO TORAKS'] = df['FOTO TORAKS'].replace('Tidak dilakukan', 'Positif')
     df['STATUS HIV'] = df['STATUS HIV'].replace('Tidak diketahui', 'Negatif')
     df['RIWAYAT DIABETES'] = df['RIWAYAT DIABETES'].replace('Tidak diketahui', 'Tidak')
     df['HASIL TCM'] = df['HASIL TCM'].replace('Tidak dilakukan', 'Rif Sensitif')
@@ -131,15 +138,9 @@ def show_preprocessing():
         st.write(df.dtypes)
 
 
-
     # --------------- Final data -----------------
     st.write("### Data Akhir")
     st.write(df.head())
-
-    # st.write("### Normalisasi data")
-    # scaler = StandardScaler()
-    # df[df.columns] = scaler.fit_transform(df[df.columns])
-    # st.write(df.head())
     
     st.session_state['preprocessed_data'] = df
 
@@ -232,8 +233,8 @@ def show_testing():
     }
 
     labels_encode = {
-        1: "Paru",
-        0: "Ekstra paru",
+        0: "Paru",
+        1: "Ekstra paru",
     }
 
     st.title("Prediksi TBC")
