@@ -262,7 +262,7 @@ def show_testing():
 
     check= st.button("Prediksi")
 
-    file = open("model\clf_pkl",'rb')
+    file = open("model/clf_pkl",'rb')
     model = pickle.load(file)
 
     prediction = model.predict(input_data)
